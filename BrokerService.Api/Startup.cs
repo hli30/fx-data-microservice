@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using BrokerService.Libs.Scheduler;
+using BrokerService.Libs.DataFetcher;
 
 namespace BrokerService.Api
 {
@@ -27,6 +28,8 @@ namespace BrokerService.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            //services.AddSingleton<IConfiguration>(Configuration);
+            services.AddSingleton<IPriceDataFetcher, PriceDataFetcher>();
             services.AddSingleton<Microsoft.Extensions.Hosting.IHostedService, DailyTask>();
         }
 

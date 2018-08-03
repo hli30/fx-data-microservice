@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using BrokerService.Libs.DataFetcher;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,16 +13,21 @@ namespace BrokerService.Libs.Scheduler
         //runs Sun to Fri at 21:15 
         //protected override string Schedule => "15 21 * * 0-5";
 
-        public IConfiguration Configuration { get; }
+        private IPriceDataFetcher _priceDataFetcher;
 
-        public DailyTask(IConfiguration configuration) : base()
+        public DailyTask(IPriceDataFetcher priceDataFetcher) : base()
         {
-            Configuration = configuration;
+            Console.WriteLine("Constructing dailytask");
+            _priceDataFetcher = priceDataFetcher;
         }
 
         protected override Task DailyCandleTask()
         {
             Console.WriteLine("Running daily candle task");
+
+            var myString = _priceDataFetcher.GetDailyData("Oanda");
+
+            Console.WriteLine(myString);
             return Task.CompletedTask;
         }
     }
