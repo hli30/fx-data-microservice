@@ -28,7 +28,6 @@ namespace BrokerService.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            //services.AddSingleton<IConfiguration>(Configuration);
             services.AddSingleton<IPriceDataFetcher, PriceDataFetcher>();
             services.AddSingleton<Microsoft.Extensions.Hosting.IHostedService, DailyTask>();
         }
@@ -47,6 +46,7 @@ namespace BrokerService.Api
 
             app.UseHttpsRedirection();
             app.UseMvc();
+            
         }
     }
 }

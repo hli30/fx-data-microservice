@@ -28,9 +28,11 @@ namespace BrokerService.Libs.DataFetcher
                     break;
             }
 
-            BrokerSettings settings= _factory.GetBrokerSettings();
+            BrokerConnection connection = _factory.GetBrokerConnection();
 
-            return $"broker key: {settings.ApiKey}\nbroker endpoint: {settings.Endpoint}";
+            connection.FetchCandles("D");
+
+            return "";
         }
     }
 }

@@ -6,6 +6,6 @@ namespace BrokerService.Libs.Brokers
 {
     abstract class BrokerFactory
     {
-        public abstract BrokerSettings GetBrokerSettings();
+        public abstract BrokerConnection GetBrokerConnection();
     }
 }

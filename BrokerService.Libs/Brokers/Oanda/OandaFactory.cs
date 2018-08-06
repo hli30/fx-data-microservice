@@ -16,9 +16,9 @@ namespace BrokerService.Libs.Brokers.Oanda
             _mode = mode;
         }
 
-        public override BrokerSettings GetBrokerSettings()
+        public override BrokerConnection GetBrokerConnection()
         {
-            return new OandaSettings(_mode, _configuration);
+            return new OandaConnection(_mode, _configuration);
         }
     }
 }

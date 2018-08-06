@@ -17,7 +17,6 @@ namespace BrokerService.Libs.Scheduler
 
         public DailyTask(IPriceDataFetcher priceDataFetcher) : base()
         {
-            Console.WriteLine("Constructing dailytask");
             _priceDataFetcher = priceDataFetcher;
         }
 
