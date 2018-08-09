@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BrokerService.Database.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -15,6 +16,6 @@ namespace BrokerService.Libs.Brokers
         /// D = Daily;
         /// H = Hourly.
         /// </param>
-        public abstract void FetchCandles(string granularity);
+        public abstract List<PriceCandle> FetchCandles(string granularity);
     }
 }

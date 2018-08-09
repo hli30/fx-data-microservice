@@ -1,4 +1,6 @@
-﻿using BrokerService.Libs.Brokers.Oanda.JsonResponse;
+﻿using BrokerService.Database.Models;
+using BrokerService.Libs.Brokers.Oanda.JsonResponse;
+using BrokerService.Libs.Util;
 using JsonPrettyPrinterPlus;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -39,13 +41,13 @@ namespace BrokerService.Libs.Brokers.Oanda
             request.AddHeader("Authorization", $"Bearer {_apiKey}");
 
             request.AddParameter("price", "BA");
-            request.AddParameter("count", "2");
+            request.AddParameter("count", "4");
             //from ... to ... DateTime
-
+            
             return request;
         }
 
-        public override void FetchCandles(string granularity)
+        public override List<PriceCandle> FetchCandles(string granularity)
         {
             var client = new RestClient(_endpoint);
 
@@ -55,10 +57,17 @@ namespace BrokerService.Libs.Brokers.Oanda
             IRestResponse response = client.Execute(request);
 
             var jsonRes = response.Content;
+            Console.WriteLine($"RECEIVED DATA:{jsonRes.PrettyPrintJson()}");
 
             var jsonObj = JsonConvert.DeserializeObject<CandleJson>(jsonRes);
 
-            //remap to db and save
+            var remapper = new ResponseRemapper();
+
+
+            List<PriceCandle> priceCandle = remapper.RemapResponseToDb(jsonObj);
+
+
+            return priceCandle;
         }
     }
 }

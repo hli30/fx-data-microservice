@@ -12,6 +12,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using BrokerService.Libs.Scheduler;
 using BrokerService.Libs.DataFetcher;
+using Microsoft.EntityFrameworkCore;
+using BrokerService.Database.Models;
 
 namespace BrokerService.Api
 {
@@ -28,6 +30,12 @@ namespace BrokerService.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            //Database config
+            var connection = Configuration.GetSection("ConnectionStrings")["DefaultDb"];
+            services.AddEntityFrameworkNpgsql().AddDbContext<Broker_Data_ServiceContext>(options => options.UseNpgsql(connection));
+
+            //Background long-running task for fetching price data
             services.AddSingleton<IPriceDataFetcher, PriceDataFetcher>();
             services.AddSingleton<Microsoft.Extensions.Hosting.IHostedService, DailyTask>();
         }

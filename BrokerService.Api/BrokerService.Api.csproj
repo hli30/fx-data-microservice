@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BrokerService.Database\BrokerService.Database.csproj" />
     <ProjectReference Include="..\BrokerService.Libs\BrokerService.Libs.csproj" />
   </ItemGroup>
 
