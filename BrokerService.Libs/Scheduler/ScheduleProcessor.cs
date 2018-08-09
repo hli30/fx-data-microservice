@@ -22,24 +22,25 @@ namespace BrokerService.Libs.Scheduler
         {
             int counter = 0;
             Console.WriteLine("service started, do 1st time setup");
+            await DailyCandleTask();
+            await Task.Delay(10000, stoppingToken);
+            //do
+            //{
+            //    var now = DateTime.Now;
 
-            do
-            {
-                var now = DateTime.Now;
-
-                if (now > _nextRun)
-                {
-                    Console.WriteLine("Starting Task");
-                    await DailyCandleTask();
-                    _nextRun = _schedule.GetNextOccurrence(now);
-                    Console.WriteLine("Task complete, reset");
-                    counter = 0;
-                }
-                Console.WriteLine($"waiting {counter} sec");
-                await Task.Delay(10000, stoppingToken);
-                counter += 10;
-            }
-            while (!stoppingToken.IsCancellationRequested);
+            //    if (now > _nextRun)
+            //    {
+            //        Console.WriteLine("Starting Task");
+            //        await DailyCandleTask();
+            //        _nextRun = _schedule.GetNextOccurrence(now);
+            //        Console.WriteLine("Task complete, reset");
+            //        counter = 0;
+            //    }
+            //    Console.WriteLine($"waiting {counter} sec");
+            //    await Task.Delay(10000, stoppingToken);
+            //    counter += 10;
+            //}
+            //while (!stoppingToken.IsCancellationRequested);
         }
 
         protected abstract Task DailyCandleTask();
