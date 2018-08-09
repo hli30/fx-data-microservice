@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrokerService.Api", "Broker
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrokerService.Libs", "BrokerService.Libs\BrokerService.Libs.csproj", "{CFF86023-E763-4B1B-8648-C08949A0A3DD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrokerService.Database", "BrokerService.Database\BrokerService.Database.csproj", "{771EDEAE-FB91-4C08-BB9F-7A26F3807676}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{CFF86023-E763-4B1B-8648-C08949A0A3DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFF86023-E763-4B1B-8648-C08949A0A3DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFF86023-E763-4B1B-8648-C08949A0A3DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{771EDEAE-FB91-4C08-BB9F-7A26F3807676}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{771EDEAE-FB91-4C08-BB9F-7A26F3807676}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{771EDEAE-FB91-4C08-BB9F-7A26F3807676}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{771EDEAE-FB91-4C08-BB9F-7A26F3807676}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

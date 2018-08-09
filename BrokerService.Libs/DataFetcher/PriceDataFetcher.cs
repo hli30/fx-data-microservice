@@ -1,4 +1,5 @@
-﻿using BrokerService.Libs.Brokers;
+﻿using BrokerService.Database.Models;
+using BrokerService.Libs.Brokers;
 using BrokerService.Libs.Brokers.Oanda;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -17,7 +18,7 @@ namespace BrokerService.Libs.DataFetcher
             _configuration = configuration;
         }
 
-        public string GetDailyData(string broker, string mode = "Practice")
+        public List<PriceCandle> GetDailyData(string broker, string mode = "Practice")
         {
             switch (broker)
             {
@@ -30,9 +31,9 @@ namespace BrokerService.Libs.DataFetcher
 
             BrokerConnection connection = _factory.GetBrokerConnection();
 
-            connection.FetchCandles("D");
+            List<PriceCandle> candle = connection.FetchCandles("D");
 
-            return "";
+            return candle;
         }
     }
 }
