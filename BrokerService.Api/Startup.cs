@@ -14,6 +14,7 @@ using BrokerService.Libs.Scheduler;
 using BrokerService.Libs.DataFetcher;
 using Microsoft.EntityFrameworkCore;
 using BrokerService.Database.Models;
+using BrokerService.Database.Operations.Read;
 
 namespace BrokerService.Api
 {
@@ -34,6 +35,9 @@ namespace BrokerService.Api
             //Database config
             var connection = Configuration.GetSection("ConnectionStrings")["DefaultDb"];
             services.AddEntityFrameworkNpgsql().AddDbContext<Broker_Data_ServiceContext>(options => options.UseNpgsql(connection));
+
+            //Database CRUD
+            services.AddTransient<IReadOps, ReadOps>();
 
             //Background long-running task for fetching price data
             services.AddSingleton<IPriceDataFetcher, PriceDataFetcher>();

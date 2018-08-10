@@ -2,10 +2,9 @@
 using BrokerService.Libs.DataFetcher;
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
+using BrokerService.Database.Operations.Read;
 
 namespace BrokerService.Libs.Scheduler
 {
@@ -23,13 +22,18 @@ namespace BrokerService.Libs.Scheduler
         {
             _priceDataFetcher = priceDataFetcher;
             _provider = provider;
-            
         }
 
         protected override Task PriceCandleTask()
         {
             Console.WriteLine("Running daily candle task");
 
+            using (IServiceScope scope = _provider.CreateScope())
+            {
+                var readOps = scope.ServiceProvider.GetRequiredService<IReadOps>();
+                PriceCandle latestCandle = readOps.FindLatestEntryForPair("EUR_USD");
+                //get the datetime of latest is from, to is today +15mins, see how many comes back
+            }
             List<PriceCandle> priceCandle = _priceDataFetcher.GetDailyData("Oanda");
 
             using (IServiceScope scope = _provider.CreateScope())
