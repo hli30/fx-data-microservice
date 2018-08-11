@@ -15,18 +15,17 @@ namespace BrokerService.Libs.Scheduler
         public ScheduleProcessor() : base()
         {
             _schedule = CrontabSchedule.Parse(Schedule);
-            _nextRun = _schedule.GetNextOccurrence(DateTime.Now);
+            _nextRun = _schedule.GetNextOccurrence(DateTime.UtcNow);
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            int counter = 0;
             Console.WriteLine("service started, do 1st time setup");
             await PriceCandleTask();
             await Task.Delay(10000, stoppingToken);
             //do
             //{
-            //    var now = DateTime.Now;
+            //var now = DateTime.UtcNow;
 
             //    if (now > _nextRun)
             //    {
@@ -34,11 +33,9 @@ namespace BrokerService.Libs.Scheduler
             //        await PriceCandleTask();
             //        _nextRun = _schedule.GetNextOccurrence(now);
             //        Console.WriteLine("Task complete, reset");
-            //        counter = 0;
             //    }
-            //    Console.WriteLine($"waiting {counter} sec");
+            //    Console.WriteLine("waiting for next run");
             //    await Task.Delay(10000, stoppingToken);
-            //    counter += 10;
             //}
             //while (!stoppingToken.IsCancellationRequested);
         }

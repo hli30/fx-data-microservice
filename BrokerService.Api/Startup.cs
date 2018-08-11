@@ -40,7 +40,7 @@ namespace BrokerService.Api
             services.AddTransient<IReadOps, ReadOps>();
 
             //Background long-running task for fetching price data
-            services.AddSingleton<IPriceDataFetcher, PriceDataFetcher>();
+            services.AddTransient<IPriceDataFetcher, PriceDataFetcher>();
             services.AddSingleton<Microsoft.Extensions.Hosting.IHostedService, DailyTask>();
         }
 

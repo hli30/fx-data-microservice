@@ -16,6 +16,6 @@ namespace BrokerService.Libs.Brokers
         /// D = Daily;
         /// H = Hourly.
         /// </param>
-        public abstract List<PriceCandle> FetchCandles(string granularity);
+        public abstract List<PriceCandle> FetchCandles(string granularity, DateTime from);
     }
 }

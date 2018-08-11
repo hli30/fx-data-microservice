@@ -2,7 +2,6 @@
 using BrokerService.Libs.Brokers.Oanda.JsonResponse;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace BrokerService.Libs.Util
 {
@@ -22,7 +21,7 @@ namespace BrokerService.Libs.Util
 
                         priceCandle.Granularity = candleJson.Granularity;
                         priceCandle.Instrument = candleJson.Instrument;
-                        priceCandle.PriceTime = DateTime.Parse(candle.Time);
+                        priceCandle.PriceTime = DateTime.Parse(candle.Time).ToUniversalTime();
                         priceCandle.Volume = candle.Volume;
 
                         priceCandle.BidOpen = decimal.Parse(candle.Bid.Open);

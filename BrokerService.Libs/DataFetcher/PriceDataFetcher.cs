@@ -18,7 +18,7 @@ namespace BrokerService.Libs.DataFetcher
             _configuration = configuration;
         }
 
-        public List<PriceCandle> GetDailyData(string broker, string mode = "Practice")
+        public List<PriceCandle> GetDailyData(string broker, DateTime from, string mode = "Practice")
         {
             switch (broker)
             {
@@ -31,7 +31,7 @@ namespace BrokerService.Libs.DataFetcher
 
             BrokerConnection connection = _factory.GetBrokerConnection();
 
-            List<PriceCandle> candle = connection.FetchCandles("D");
+            List<PriceCandle> candle = connection.FetchCandles("D", from);
 
             return candle;
         }

@@ -7,6 +7,6 @@ namespace BrokerService.Libs.DataFetcher
 {
     public interface IPriceDataFetcher
     {
-        List<PriceCandle> GetDailyData(string broker, string mode = "Practice");
+        List<PriceCandle> GetDailyData(string broker, DateTime from, string mode = "Practice");
     }
 }

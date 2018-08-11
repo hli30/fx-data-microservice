@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Xml;
 
 namespace BrokerService.Libs.Brokers.Oanda
 {
@@ -41,31 +41,35 @@ namespace BrokerService.Libs.Brokers.Oanda
             request.AddHeader("Authorization", $"Bearer {_apiKey}");
 
             request.AddParameter("price", "BA");
-            request.AddParameter("count", "4");
-            //from ... to ... DateTime
-            
+
             return request;
         }
 
-        public override List<PriceCandle> FetchCandles(string granularity)
+        public override List<PriceCandle> FetchCandles(string granularity, DateTime from)
         {
             var client = new RestClient(_endpoint);
-
             var request = SetupGetRequest("EUR_USD"); //need to refactor into using all fxpairs
+
+            DateTime now = DateTime.UtcNow;
+
+            //Converting DateTime to RFC3339 format as required by Oanda API
+            string utcTo = XmlConvert.ToString(now, XmlDateTimeSerializationMode.Utc);
+            string utcFrom = XmlConvert.ToString(from, XmlDateTimeSerializationMode.Utc);
+
             request.AddParameter("granularity", granularity);
+            request.AddParameter("from", utcFrom);
+            request.AddParameter("to", utcTo);
 
             IRestResponse response = client.Execute(request);
 
-            var jsonRes = response.Content;
+            string jsonRes = response.Content;
             Console.WriteLine($"RECEIVED DATA:{jsonRes.PrettyPrintJson()}");
 
-            var jsonObj = JsonConvert.DeserializeObject<CandleJson>(jsonRes);
+            CandleJson jsonObj = JsonConvert.DeserializeObject<CandleJson>(jsonRes);
 
             var remapper = new ResponseRemapper();
 
-
             List<PriceCandle> priceCandle = remapper.RemapResponseToDb(jsonObj);
-
 
             return priceCandle;
         }
