@@ -20,7 +20,8 @@ namespace BrokerService.Libs.Scheduler
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            Console.WriteLine("service started, do 1st time setup");
+            Console.WriteLine("Service started");
+
             await PriceCandleTask();
             await Task.Delay(10000, stoppingToken);
             //do

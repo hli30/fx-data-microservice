@@ -1,12 +1,11 @@
 ﻿using BrokerService.Database.Models;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace BrokerService.Libs.DataFetcher
 {
     public interface IPriceDataFetcher
     {
-        List<PriceCandle> GetDailyData(string broker, DateTime from, string mode = "Practice");
+        List<PriceCandle> GetPriceCandles(string broker, string granularity, DateTime from, string mode = "Practice");
     }
 }

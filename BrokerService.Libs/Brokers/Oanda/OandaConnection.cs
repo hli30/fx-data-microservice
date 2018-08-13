@@ -15,6 +15,7 @@ namespace BrokerService.Libs.Brokers.Oanda
     {
         private readonly string _apiKey;
         private readonly string _endpoint;
+        private readonly RestClient _client;
 
         public OandaConnection(string mode, IConfiguration configuration)
         {
@@ -28,6 +29,8 @@ namespace BrokerService.Libs.Brokers.Oanda
             {
                 _endpoint = configuration.GetSection("Oanda")["Endpoint:Live"];
             }
+
+            _client = new RestClient(_endpoint);
         }
 
         private RestRequest SetupGetRequest(string fxPair)
@@ -40,6 +43,7 @@ namespace BrokerService.Libs.Brokers.Oanda
             request.AddHeader("Content-Type", "application/json");
             request.AddHeader("Authorization", $"Bearer {_apiKey}");
 
+            request.AddParameter("count", 5000);
             request.AddParameter("price", "BA");
 
             return request;
@@ -47,20 +51,15 @@ namespace BrokerService.Libs.Brokers.Oanda
 
         public override List<PriceCandle> FetchCandles(string granularity, DateTime from)
         {
-            var client = new RestClient(_endpoint);
             var request = SetupGetRequest("EUR_USD"); //need to refactor into using all fxpairs
 
-            DateTime now = DateTime.UtcNow;
-
             //Converting DateTime to RFC3339 format as required by Oanda API
-            string utcTo = XmlConvert.ToString(now, XmlDateTimeSerializationMode.Utc);
             string utcFrom = XmlConvert.ToString(from, XmlDateTimeSerializationMode.Utc);
 
             request.AddParameter("granularity", granularity);
             request.AddParameter("from", utcFrom);
-            request.AddParameter("to", utcTo);
 
-            IRestResponse response = client.Execute(request);
+            IRestResponse response = _client.Execute(request);
 
             string jsonRes = response.Content;
             Console.WriteLine($"RECEIVED DATA:{jsonRes.PrettyPrintJson()}");
