@@ -4,7 +4,6 @@ using BrokerService.Libs.Brokers.Oanda;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace BrokerService.Libs.DataFetcher
 {
@@ -18,7 +17,7 @@ namespace BrokerService.Libs.DataFetcher
             _configuration = configuration;
         }
 
-        public List<PriceCandle> GetDailyData(string broker, string mode = "Practice")
+        public List<PriceCandle> GetPriceCandles(string broker, string granularity, DateTime from, string mode = "Practice")
         {
             switch (broker)
             {
@@ -31,7 +30,7 @@ namespace BrokerService.Libs.DataFetcher
 
             BrokerConnection connection = _factory.GetBrokerConnection();
 
-            List<PriceCandle> candle = connection.FetchCandles("D");
+            List<PriceCandle> candle = connection.FetchCandles(granularity, from);
 
             return candle;
         }

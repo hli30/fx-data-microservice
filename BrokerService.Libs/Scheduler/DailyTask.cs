@@ -1,11 +1,10 @@
 ﻿using BrokerService.Database.Models;
+using BrokerService.Database.Operations.Read;
 using BrokerService.Libs.DataFetcher;
 using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BrokerService.Libs.Scheduler
 {
@@ -23,25 +22,63 @@ namespace BrokerService.Libs.Scheduler
         {
             _priceDataFetcher = priceDataFetcher;
             _provider = provider;
-            
+        }
+
+        //Helper function to aggregate data received from multiple calls when range exceeding maximum candles per call
+        private List<PriceCandle> FetchData (string broker, string granularity, DateTime from)
+        {
+            List<PriceCandle> priceCandles = _priceDataFetcher.GetPriceCandles(broker, granularity, from);
+
+            if (priceCandles.Count == 5000)
+            {
+                var lastCandleDate = priceCandles[priceCandles.Count - 1].PriceTime.AddDays(1);
+                var data = FetchData(broker, granularity, lastCandleDate);
+                priceCandles.AddRange(data);
+            }
+
+            return priceCandles;
         }
 
         protected override Task PriceCandleTask()
         {
             Console.WriteLine("Running daily candle task");
 
-            List<PriceCandle> priceCandle = _priceDataFetcher.GetDailyData("Oanda");
-
             using (IServiceScope scope = _provider.CreateScope())
             {
+                //Sets a default starting date
+                DateTime from = new DateTime(2000, 1, 1);
+
+                try
+                {
+                    // Finds the timestamp for the latest db entry and offset the date by
+                    // +1 day, in order to fetch data starting from the next available day
+                    var readOps = scope.ServiceProvider.GetRequiredService<IReadOps>();
+
+                    PriceCandle latestCandle = readOps.FindLatestEntryForPair("EUR_USD");
+
+                    from = latestCandle.PriceTime.AddDays(1).ToUniversalTime();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error in getting most recent db entry, using default start date");
+                }
+
+                List<PriceCandle> priceCandles = FetchData("Oanda", "D", from);
+
                 var context = scope.ServiceProvider.GetRequiredService<Broker_Data_ServiceContext>();
 
-                foreach (var candle in priceCandle)
+                foreach (var candle in priceCandles)
                 {
-                    context.PriceCandle.Add(candle);
-                    Console.WriteLine($"Saving data:\n{candle}");
-                    context.SaveChanges();
-                    Console.WriteLine("Saved Success");
+                    try
+                    {
+                        context.PriceCandle.Add(candle);
+                        context.SaveChanges();
+                        Console.WriteLine("Saved Success");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Saving data unsuccessful");
+                    }
                 }
             }
 

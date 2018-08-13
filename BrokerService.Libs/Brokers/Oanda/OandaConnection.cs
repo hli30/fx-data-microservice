@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Xml;
 
 namespace BrokerService.Libs.Brokers.Oanda
 {
@@ -15,6 +15,7 @@ namespace BrokerService.Libs.Brokers.Oanda
     {
         private readonly string _apiKey;
         private readonly string _endpoint;
+        private readonly RestClient _client;
 
         public OandaConnection(string mode, IConfiguration configuration)
         {
@@ -28,6 +29,8 @@ namespace BrokerService.Libs.Brokers.Oanda
             {
                 _endpoint = configuration.GetSection("Oanda")["Endpoint:Live"];
             }
+
+            _client = new RestClient(_endpoint);
         }
 
         private RestRequest SetupGetRequest(string fxPair)
@@ -40,32 +43,32 @@ namespace BrokerService.Libs.Brokers.Oanda
             request.AddHeader("Content-Type", "application/json");
             request.AddHeader("Authorization", $"Bearer {_apiKey}");
 
+            request.AddParameter("count", 5000);
             request.AddParameter("price", "BA");
-            request.AddParameter("count", "4");
-            //from ... to ... DateTime
-            
+
             return request;
         }
 
-        public override List<PriceCandle> FetchCandles(string granularity)
+        public override List<PriceCandle> FetchCandles(string granularity, DateTime from)
         {
-            var client = new RestClient(_endpoint);
-
             var request = SetupGetRequest("EUR_USD"); //need to refactor into using all fxpairs
+
+            //Converting DateTime to RFC3339 format as required by Oanda API
+            string utcFrom = XmlConvert.ToString(from, XmlDateTimeSerializationMode.Utc);
+
             request.AddParameter("granularity", granularity);
+            request.AddParameter("from", utcFrom);
 
-            IRestResponse response = client.Execute(request);
+            IRestResponse response = _client.Execute(request);
 
-            var jsonRes = response.Content;
+            string jsonRes = response.Content;
             Console.WriteLine($"RECEIVED DATA:{jsonRes.PrettyPrintJson()}");
 
-            var jsonObj = JsonConvert.DeserializeObject<CandleJson>(jsonRes);
+            CandleJson jsonObj = JsonConvert.DeserializeObject<CandleJson>(jsonRes);
 
             var remapper = new ResponseRemapper();
 
-
             List<PriceCandle> priceCandle = remapper.RemapResponseToDb(jsonObj);
-
 
             return priceCandle;
         }
