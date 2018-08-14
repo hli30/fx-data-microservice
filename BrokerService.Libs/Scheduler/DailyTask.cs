@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using BrokerService.Libs.Util;
 
 namespace BrokerService.Libs.Scheduler
 {
@@ -65,9 +66,11 @@ namespace BrokerService.Libs.Scheduler
 
                 List<PriceCandle> priceCandles = FetchData("Oanda", "D", from);
 
+                List<PriceCandle> validatedCandles = Validator.ContinuousDataCheck(priceCandles);
+
                 var context = scope.ServiceProvider.GetRequiredService<Broker_Data_ServiceContext>();
 
-                foreach (var candle in priceCandles)
+                foreach (var candle in validatedCandles)
                 {
                     try
                     {
